@@ -6,8 +6,9 @@ import local_auth:
   import 'package:local_auth/local_auth.dart';
 
 create an instance:
+```
   final LocalAuthentication localAuthentication = LocalAuthentication();
-
+```
 some of the things that we can do:
 - check if biometric auth is supported
 - get a list of available biometric types
@@ -17,18 +18,21 @@ some of the things that we can do:
 
 You can check if the device supports biometric authentication or if it can 
 use the device credentials (pin/passcode lock):
+```
   bool isBiometricSupported = await localAuthentication.isDeviceSupported();
-
+```
 Now, if you want to verify whether biometric authentication is accessible 
 from the app, you can check it using this:
-  bool canCheckBiometrics = await localAuthentication.canCheckBiometrics;
-
+ ```
+ bool canCheckBiometrics = await localAuthentication.canCheckBiometrics;
+```
 ## Retrieve list of biometric types
 
 You can retrieve a list of biometric types that are supported by the 
 device, using this:
+```
   List<BiometricType> biometricTypes = await localAuthentication.getAvailableBiometrics();
-
+```
 The list may contain one or more from the following types:
 - BiometricType.face
 - BiometricType.fingerprint
@@ -38,20 +42,20 @@ The list may contain one or more from the following types:
 
 You can perform the local authentication (that is using biometrics or pin/passcode) 
 by using the following:
-
+```
   isAuthenticated = await localAuthentication.authenticate(
     localizedReasons: 'Please complete the biometrics to proceed.'
   );
-
+```
 If you want to restrict the user to biometric authentication (prevent 
 authenticating using pin/passcode)
 , you can set the biometricOnly parameter value to true:
-
+```
   isAuthenticated = await localAuthentication.authenticate(
     localizedReason: 'Please complete the biometrics to proceed',
     biometricOnly: true
   );
-
+```
 In our implementation, we will need to check if biometric authentication is suported 
 by the device, then let the user to only use biometrics to authenticate, and move to 
 the next screen.
@@ -64,7 +68,7 @@ SecretVaultScreen.
 Define a new method in the Authentication class, present in the authentication.dart 
 file, called authenticateWithBiometrics() where the entire logic of biometric 
 authentication will be written.
-
+```
   class Authentication {
     static Future<bool> authenticateWithBiometrics() async {
       final LocalAuthentication localAuthentication = LocalAuthentication();
@@ -83,7 +87,7 @@ authentication will be written.
       return isAuthenticated;
     }
   }
-
+```
 The authenticateWithBiometrics() method will return a boolean indicating whether the 
 biometric authentication is successful.
 
@@ -100,7 +104,7 @@ is resumed.
 
 Now you can update the onPressed() method of the Access secret vault button to use 
 the biometric authentication:
-
+```
   ElevatedButton(
     onPressed: () async {
       bool isAuthenticated = await Authentication.authenticateWithBiometrics();
@@ -121,7 +125,7 @@ the biometric authentication:
     },
   },
 ),
-
+```
 If the authentication is successful then the user will navigated to the 
 SecretVaultScreen, otherwise a SnackBar would be shown with an error message.
 
@@ -131,12 +135,12 @@ SecretVaultScreen, otherwise a SnackBar would be shown with an error message.
 
 Add this permission to the AndroidManifest.xml file present in the directory 
 android -> app -> src -> main:
-
+```
 <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
-
+```
 Update the MainActivity.kt file to use FlutterfragmentACtivity instead of 
 FlutterActivity:
-
+```
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugins.GeneratedPluginRegistrant
@@ -146,11 +150,13 @@ class MainActivity: FlutterFragmentActivity() {
         GeneratedPluginRegistrant.registerWith(flutterEngine)
     }
 }
-
+```
 # For iOS:
 
 For using FaceID on iOS, add the following line to the Info.plist file, this defines 
 the message to be displayed when a user is prompted to authenticate:
 
+```
 <key>NSFaceIDUsageDescription</key>
 <string>Biometric authentication for accessing secrets</string>
+```
